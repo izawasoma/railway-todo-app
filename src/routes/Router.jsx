@@ -1,6 +1,6 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Home } from "../pages/Home";
 import { NotFound } from "../pages/NotFound";
 import { SignIn } from "../pages/SignIn";
@@ -9,28 +9,26 @@ import { NewList } from "../pages/NewList";
 import { EditTask } from "../pages/EditTask";
 import { SignUp } from "../pages/SignUp";
 import { EditList } from "../pages/EditList";
+import { PrivateRouter } from "./PrivateRouter";
 
 export const Router = () => {
-  const auth = useSelector((state) => state.auth.isSignIn)
+  const auth = useSelector((state) => state.auth.isSignIn);
+  console.log(auth);
 
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/signin" component={SignIn} />
-        <Route path="/signup" component={SignUp} />
-        {auth ? (
-          <>
-            <Route path="/" component={Home} />
-            <Route path="/task/new" component={NewTask} />
-            <Route path="/list/new" component={NewList} />
-            <Route path="/lists/:listId/tasks/:taskId" component={EditTask} />
-            <Route path="/lists/:listId/edit" component={EditList} />
-          </>
-        ) : (
-          <Navigate to="/signin" />
-          )}
-          <Route component={NotFound} />
-        </Routes>
+        <Route path={`/signin`} element={<SignIn />} />
+        <Route path={`/signup`} element={<SignUp />} />
+        <Route path={`/`} element={<PrivateRouter />}>
+          <Route path={`/`} element={<Home />} />
+          <Route path={`/task/new`} element={<NewTask />} />
+          <Route path={`/list/new`} element={<NewList />} />
+          <Route path={`/lists/:listId/tasks/:taskId`} element={<EditTask />} />
+          <Route path={`/lists/:listId/edit`} element={<EditList />} />
+        </Route>
+        <Route path="/*" element={NotFound} />
+      </Routes>
     </BrowserRouter>
   )
 }
