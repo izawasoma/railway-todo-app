@@ -4,6 +4,12 @@
 
 [[Node.js] 依存パッケージをアップデートする](https://blog.katsubemakito.net/nodejs/update-require-module)
 
+```
+ncu //アップデート対象の確認
+ncu -u //最新のパッケージ情報に書き換え
+```
+実行後、「npm install」の実行を忘れずに行う。
+
 ## react-router-dom v5.0 -> v6.0での変更点
 
 [React Router を v5 から v6 にアップデートしてみました](https://dev.classmethod.jp/articles/react-router-5to6/#toc-3)
@@ -46,9 +52,3 @@ export const PrivateRouter = () => {
   return auth ? <Outlet/> : <Navigate to="/signup" />;
 }
 ```
-
-```
-ncu //アップデート対象の確認
-ncu -u //最新のパッケージ情報に書き換え
-```
-実行後、「npm install」の実行を忘れずに行う。
