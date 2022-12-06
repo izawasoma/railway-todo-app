@@ -4,6 +4,5 @@ import { Navigate, Outlet } from "react-router-dom";
 
 export const PrivateRouter = () => {
   const auth = useSelector((state) => state.auth.isSignIn)
-  console.log("aaa");
   return auth ? <Outlet/> : <Navigate to="/signup" />;
 }
