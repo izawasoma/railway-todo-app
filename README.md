@@ -1,49 +1,54 @@
 # Railway中級編 Todoアプリをアップデートしよう
 
-## 初期設定
-### 必要なツール
-1. Node.js v16以降
-2. Yarn v1
+## バージョンを上げる
 
-このRailwayに取り組む方はすでにインストールできていると思いますがされていない方はインストールしてください。  
-初期設定は原則HTML/CSS/JavaScript Railway, React.js Railwayと同様となります。
+[[Node.js] 依存パッケージをアップデートする](https://blog.katsubemakito.net/nodejs/update-require-module)
 
-#### railway-todo-appリポジトリのFork
-画面右上にあるForkより[railway-todo-app](https://github.com/TechBowl-japan/railway-todo-app)のリポジトリを自分のアカウントにForkしてください。
+```
+ncu //アップデート対象の確認
+ncu -u //最新のパッケージ情報に書き換え
+```
+実行後、「npm install」の実行を忘れずに行う。
 
-#### railway-todo-appリポジトリのClone
-作成したリポジトリを作業するディレクトリにクローンしましょう。
-- Macなら Terminal.app(iTerm2などでも良い)
-- Windowsなら PowerShell(GitBashなどのインストールしたアプリでもう良いです。アプリによってはコマンドが異なることがあります)  
-で作業するディレクトリを開き、次のコマンドでForkしたReact.js　Railwayのリポジトリをローカルにクローンしてください。
+## react-router-dom v5.0 -> v6.0での変更点
 
-```powershell
-git clone https://github.com/{GitHubのユーザー名}/railway-todo-app.git
+[React Router を v5 から v6 にアップデートしてみました](https://dev.classmethod.jp/articles/react-router-5to6/#toc-3)
+
+他にも、Routerのプロパティが「component」から「element」に変わってたりする。
+
+## 認証状態によってプライベートルーターを設定する
+
+```JavaScript
+export const Router = () => {
+  const auth = useSelector((state) => state.auth.isSignIn);
+  console.log(auth);
+
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path={`/signin`} element={<SignIn />} />
+        <Route path={`/signup`} element={<SignUp />} />
+        <Route path={`/`} element={<PrivateRouter />}>
+          <Route path={`/`} element={<Home />} />
+          <Route path={`/task/new`} element={<NewTask />} />
+          <Route path={`/list/new`} element={<NewList />} />
+          <Route path={`/lists/:listId/tasks/:taskId`} element={<EditTask />} />
+          <Route path={`/lists/:listId/edit`} element={<EditList />} />
+        </Route>
+        <Route path="/*" element={NotFound} />
+      </Routes>
+    </BrowserRouter>
+  )
+}
 ```
 
-SSHでクローンを行う場合には、次のようになります
+```JavaScript
+import React from "react";
+import { useSelector } from "react-redux";
+import { Navigate, Outlet } from "react-router-dom";
 
-```powershell
-git clone git@github.com:[GitHubのユーザー名]/railway-todo-app.git
-```
-
-#### .envファイルの設定
-クローンしたリポジトリには.env.sampleというファイルがあります。それをコピーしたものを.envにファイル名を変更してください。  
-フォークして最初の状態ではAPIのURLを.envファイルから読み込むようになっています。それを自身の.envに追記してください。
-- API URL: https://railway-react-todo-backend.herokuapp.com
-
-#### パッケージのインストール
-クローンしたばかりのリポジトリは歯抜けの状態なので、必要なファイルをダウンロードする必要があります。 10 分程度掛かることもあるため、気長に待ちましょう。上から順番に __１つずつ__ コマンドを実行しましょう：
-
-```powershell
-cd railway-todo-app
-
-yarn install
-```
-
-#### ローカルサーバの起動
-以下コマンドを実行します。
-
-```powershell
-yarn start
+export const PrivateRouter = () => {
+  const auth = useSelector((state) => state.auth.isSignIn)
+  return auth ? <Outlet/> : <Navigate to="/signup" />;
+}
 ```
